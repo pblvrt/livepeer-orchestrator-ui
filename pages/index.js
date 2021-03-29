@@ -18,10 +18,10 @@ export default function Home() {
   const [activationRound, setActive] = useState(null)
   const [active, setIsActive] = useState(null)
   const [status, setStatus] = useState(null)
+  const [transcoderId, setTranscoderId] = useState("0xd0aa1b9d0cd06cafa6af5c1af272be88c38aa831")
 
 
   const pixelsInOneSecond = 5944.32
-  const trasconderId = "0xd0aa1b9d0cd06cafa6af5c1af272be88c38aa831"
 
   const [selected, setSelected] = useState(0);
 
@@ -29,7 +29,7 @@ export default function Home() {
     setTotalStreamedMinutes(434958)
     setTotalNetworkLPT(23389306)
     fetchLivepeerData();
-  }, [])
+  }, [transcoderId])
 
 
   const fetchLivepeerData = () => {
@@ -42,7 +42,7 @@ export default function Home() {
       winningTicketCount
       totalActiveStake
     }
-    transcoders(where: {id: "${trasconderId}"}) {
+    transcoders(where: {id: "${transcoderId}"}) {
       id
       totalStake
       rewardCut
@@ -72,7 +72,6 @@ export default function Home() {
       .catch((error) => {
         console.error(error)
       })
-
   }
 
 
@@ -163,9 +162,10 @@ export default function Home() {
     return (
       <>
         <p className="text-center text-white text-xl py-5">Orchestrator address</p>
-        <div className="bg-gray  mx-auto rounded-xl text-white text-center py-3 px-5 text-xl	">
-          {trasconderId}
-        </div>
+        <input className="bg-gray w-3/4 mx-auto rounded-xl text-white text-center py-2 px-5 text-xl	"
+          value={transcoderId}
+          onChange={(e) => setTranscoderId(e.target.value)}
+        />
         <div className="mx-auto w-full">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
           <div className="flex flex-row justify-center w-full">
