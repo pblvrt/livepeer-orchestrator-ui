@@ -14,54 +14,64 @@ export default function Home() {
   const [totalStreamedMinutes, setTotalStreamedMinutes] = useState(0)
   const [lptFee, setLtpFee] = useState(0)
   const [ethFee, setEthFee] = useState(0)
+  const [weiPerPixel, setWeiPerPixel] = useState(0)
+  const [activationRound, setActive] = useState(null)
+  const [active, setIsActive] = useState(null)
+  const [status, setStatus] = useState(null)
 
 
   const pixelsInOneSecond = 5944.32
-  const weiPerPixel = 2000
+  const trasconderId = "0xd0aa1b9d0cd06cafa6af5c1af272be88c38aa831"
 
-
-  const [selected, setSelected] = useState(1);
+  const [selected, setSelected] = useState(0);
 
   useEffect(() => {
-
-    setTotalNetworkLPT(23389306)
-    setCurrentInflationRate(0.0222)
-    setTotalNetworkStakedLPT(12164521)
     setTotalStreamedMinutes(434958)
-    setTotalStake(250000)
-    setLtpFee(50/100)
-    setEthFee(50/100)
-    test();
+    setTotalNetworkLPT(23389306)
+    fetchLivepeerData();
   }, [])
 
 
-  const test = () => {
+  const fetchLivepeerData = () => {
     axios.post('https://api.thegraph.com/subgraphs/name/livepeer/livepeer', {
-  query: `
+      query: `
   {
     protocol(id: "0") {
-      inflation
+      inflation 
       inflationChange
       winningTicketCount
       totalActiveStake
     }
-    transcoders(where: {active: true}, first: 5) {
+    transcoders(where: {id: "${trasconderId}"}) {
+      id
       totalStake
       rewardCut
       feeShare
-      serviceURI
+      pricePerSegment
+      active
+      status
+      activationRound
     }
   }
   `
-})
-.then((res) => {
-  for (const flashsloan of res.data.data.flashLoans) {
-    console.log(flashsloan)
-  }
-})
-.catch((error) => {
-  console.error(error)
-})
+    })
+      .then((res) => {
+        const protocol = res.data.data.protocol;
+        setCurrentInflationRate(parseInt(protocol.inflation)/ 10000000)
+        setTotalNetworkStakedLPT(parseInt(protocol.totalActiveStake).toFixed(0))
+
+        const transcoder = res.data.data.transcoders[0];
+        setTotalStake(parseInt(transcoder.totalStake));
+        setLtpFee(parseInt(transcoder.rewardCut)/1000000);
+        setEthFee(parseInt(transcoder.feeShare)/1000000);
+        setWeiPerPixel(transcoder.pricePerSegment / 10000000)
+        setActive(transcoder.activationRound)
+        setIsActive(transcoder.active)
+        setStatus(transcoder.status)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
 
   }
 
@@ -80,8 +90,6 @@ export default function Home() {
 
     var newData = parseInt(data)
     if (delegateStake === 0) newData = delegateStake + newData
-    console.log(totalStake, newData, delegateStake)
-    console.log(totalStake + newData - delegateStake)
     setTotalStake(totalStake + newData - delegateStake)
     setDelegateStake(newData);
 
@@ -98,7 +106,7 @@ export default function Home() {
   }
 
   const calculateEthperround = () => {
-    return (calculateETHminigReward() - calculateETHminigReward()* lptFee) * delegateStake / totalStake
+    return (calculateETHminigReward() - calculateETHminigReward() * lptFee) * delegateStake / totalStake
 
   }
 
@@ -117,7 +125,7 @@ export default function Home() {
   }
 
   const calculateLPTperround = () => {
-    return (calculateLPTReward(totalStake) - calculateLPTReward(totalStake)* lptFee) * delegateStake / totalStake
+    return (calculateLPTReward(totalStake) - calculateLPTReward(totalStake) * lptFee) * delegateStake / totalStake
 
   }
 
@@ -144,7 +152,7 @@ export default function Home() {
 
             <DataTooltipSquare label={"Delegated LPT"} data={delegateStake} owner={((delegateStake / totalStake) * 100).toFixed(1)} />
             <DataTooltipSquare label={"LPT weekly"} data={calculateLPTperround().toFixed(1)} />
-            <DataTooltipSquare label={"ETH fees reward"} data={calculateEthperround().toFixed(5)}/>
+            <DataTooltipSquare label={"ETH fees reward"} data={calculateEthperround().toFixed(5)} />
           </div>
         </div>
       </>
@@ -156,7 +164,7 @@ export default function Home() {
       <>
         <p className="text-center text-white text-xl py-5">Orchestrator address</p>
         <div className="bg-gray  mx-auto rounded-xl text-white text-center py-3 px-5 text-xl	">
-          0x3c5874aa481b9c652d5420d65ce8becaad9ff3a7
+          {trasconderId}
         </div>
         <div className="mx-auto w-full">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
@@ -170,17 +178,17 @@ export default function Home() {
         </div>
         <div className="mx-auto w-full">
           <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
-          <div className="flex flex-row justify-center">
+          <div className="flex flex-row ">
             <DataTooltipSquare label={"Total delegated LPT"} data={totalStake} />
-            <DataTooltipSquare label={"Network stake %"} data={(totalStake / totalNetworkStakedLPT).toFixed(5)} />
+            <DataTooltipSquare label={"Network stake %"} data={((totalStake / totalNetworkStakedLPT)*100).toFixed(2)} />
             <DataTooltipSquare label={"Wei per pixel"} data={weiPerPixel} />
-            <DataTooltipSquare label={"Total Score"} data={0} />
+            <DataTooltipSquare label={"Current activity"} data={active ? "Online" : "Offline"}   />
           </div>
-          <div className="flex flex-row justify-center mt-3">
-            <DataTooltipSquare label={"LPT reward cut %"} data={lptFee*100} />
+          <div className="flex flex-row  mt-3">
+            <DataTooltipSquare label={"LPT reward cut %"} data={lptFee * 100} />
             <DataTooltipSquare label={"ETH reward cut %"} data={ethFee * 100} />
-            <DataTooltipSquare label={"Active since"} data={"1 April 2021"} />
-            <DataTooltipSquare label={"Status"} data={"Online"} />
+            <DataTooltipSquare label={"Active since round"} data={activationRound} />
+            <DataTooltipSquare label={"Status"} data={status} />
           </div>
         </div>
         <div className="mx-auto w-full">
