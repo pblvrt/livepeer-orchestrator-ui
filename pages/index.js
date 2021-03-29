@@ -136,19 +136,18 @@ export default function Home() {
           value={delegateStake}
           onChange={(e) => setAmountToDelegate(e.target.value)}
         />
-        <div className="mx-auto w-full">
+        <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
-          <div className="flex flex-row justify-center">
+          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
             <DataTooltipSquare label={"Total delegated LPT"} data={totalStake} increase={percentIncreaseDelegatedLPT().toFixed(0)} />
             <DataTooltipSquare label={"Network stake %"} data={(calculateStakePercent(totalStake) * 100).toFixed(5)} />
             <DataTooltipSquare label={"LPT reward"} data={calculateLPTReward(totalStake).toFixed(1)} increase={calculatePercentIncrease().toFixed(1)} />
             <DataTooltipSquare label={"ETH mining reward"} data={calculateETHminigReward()} increase={calculatePercentIncrease().toFixed(0)} />
           </div>
         </div>
-        <div className="mx-auto w-full">
+        <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Delegator rewards and info</p>
-          <div className="flex flex-row justify-center">
-
+          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
             <DataTooltipSquare label={"Delegated LPT"} data={delegateStake} owner={((delegateStake / totalStake) * 100).toFixed(1)} />
             <DataTooltipSquare label={"LPT weekly"} data={calculateLPTperround().toFixed(1)} />
             <DataTooltipSquare label={"ETH fees reward"} data={calculateEthperround().toFixed(5)} />
@@ -166,9 +165,9 @@ export default function Home() {
           value={transcoderId}
           onChange={(e) => setTranscoderId(e.target.value)}
         />
-        <div className="mx-auto w-full">
+        <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
-          <div className="flex flex-row justify-center w-full">
+          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
             <DataTooltipSquare label={"Total LPT"} data={totalNetworkLPT} />
             <DataTooltipSquare label={"Total LPT stake"} data={totalNetworkStakedLPT} />
             <DataTooltipSquare label={"Weekly minutes streamed"} data={totalStreamedMinutes} />
@@ -176,28 +175,28 @@ export default function Home() {
 
           </div>
         </div>
-        <div className="mx-auto w-full">
+        <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
-          <div className="flex flex-row ">
+          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
             <DataTooltipSquare label={"Total delegated LPT"} data={totalStake} />
             <DataTooltipSquare label={"Network stake %"} data={((totalStake / totalNetworkStakedLPT)*100).toFixed(2)} />
             <DataTooltipSquare label={"Wei per pixel"} data={weiPerPixel} />
             <DataTooltipSquare label={"Current activity"} data={active ? "Online" : "Offline"}   />
           </div>
-          <div className="flex flex-row  mt-3">
+          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
             <DataTooltipSquare label={"LPT reward cut %"} data={lptFee * 100} />
             <DataTooltipSquare label={"ETH reward cut %"} data={ethFee * 100} />
             <DataTooltipSquare label={"Active since round"} data={activationRound} />
             <DataTooltipSquare label={"Status"} data={status} />
           </div>
         </div>
-        <div className="mx-auto w-full">
+        <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Estimated orchestrator rewards (7 days)</p>
           <div className="flex flex-col justify-center">
-            <div className="text-white flex flex-row mb-3">
+            <div className="text-white flex flex-col sm:flex-row mb-3">
               <p className="text-gray-light text-lg mr-3">Transcoding (eth):</p> network stake % * total pixels streamed * wei per pixel = {((pixelsInOneSecond * totalStreamedMinutes * (totalStake / totalNetworkStakedLPT) * 1000000 * weiPerPixel) / (10 ** 18)).toFixed(4)}
             </div>
-            <div className="text-white flex flex-row mb-3">
+            <div className="text-white flex flex-col sm:flex-row mb-3">
               <p className="text-gray-light text-lg mr-3">Inflation adjustment (lpt):</p> network stake % * lpt distributed per round * 7 = {((totalStake / totalNetworkStakedLPT) * ((currentInflationRate * totalNetworkLPT) / 100) * 7).toFixed(0)}
             </div>
           </div>
@@ -222,8 +221,8 @@ export default function Home() {
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
 
-      <div className="max-w-4xl	 mx-auto mt-20 mb-auto flex flex-col items-center">
-        <div className="flex flex-row w-full mb-8">
+      <div className="max-w-4xl	 md:mx-auto my-5 md:my-10 mb-auto flex flex-col items-center">
+        <div className="flex flex-row w-full md:mb-8">
           <div className={`text-lg cursor-pointer w-1/3 text-center ${selected === 0 ? "border-b text-green border-green" : "text-gray"}`}
             onClick={() => setSelected(0)}>
             Orchestrator info
