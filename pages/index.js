@@ -7,21 +7,18 @@ export default function Home() {
 
 
   const [totalStake, setTotalStake] = useState(0);
-  const [delegateStake, setDelegateStake] = useState(0)
+  const [delegatedStake, setdelegatedStake] = useState(0)
   const [totalNetworkLPT, setTotalNetworkLPT] = useState(0)
   const [totalNetworkStakedLPT, setTotalNetworkStakedLPT] = useState(12164521)
   const [currentInflationRate, setCurrentInflationRate] = useState(0)
   const [totalStreamedMinutes, setTotalStreamedMinutes] = useState(0)
   const [lptFee, setLtpFee] = useState(0)
   const [ethFee, setEthFee] = useState(0)
-  const [weiPerPixel, setWeiPerPixel] = useState(0)
+  const [weiPerPixel, setWeiPerPixel] = useState(10000)
   const [activationRound, setActive] = useState(null)
   const [active, setIsActive] = useState(null)
   const [status, setStatus] = useState(null)
   const [transcoderId, setTranscoderId] = useState("0xc08dbaf4fe0cbb1d04a14b13edef38526976f2fb")
-
-
-  const pixelsInOneSecond = 5944.32
 
   const [selected, setSelected] = useState(0);
 
@@ -57,13 +54,14 @@ export default function Home() {
     })
       .then((res) => {
         const protocol = res.data.data.protocol;
-        setCurrentInflationRate(parseInt(protocol.inflation)/ 10000000)
+        setCurrentInflationRate(parseInt(protocol.inflation) / 10000000)
         setTotalNetworkStakedLPT(parseInt(protocol.totalActiveStake).toFixed(0))
 
         const transcoder = res.data.data.transcoders[0];
         setTotalStake(parseInt(transcoder.totalStake));
-        setLtpFee(parseInt(transcoder.rewardCut)/1000000);
-        setEthFee(parseInt(transcoder.feeShare)/1000000);
+        setLtpFee(parseInt(transcoder.rewardCut) / 1000000);
+        setEthFee(parseInt(transcoder.feeShare) / 1000000);
+        console.log(transcoder.pricePerSegment)
         setWeiPerPixel(transcoder.pricePerSegment / 10000000)
         setActive(transcoder.activationRound)
         setIsActive(transcoder.active)
@@ -75,89 +73,156 @@ export default function Home() {
   }
 
 
+  /**
+   * 
+   * @param {int} stake : stake to calculate % of against total network stake
+   * @returns returns percetnage
+   */
+  const calculateStakePercent = (stake) => (stake / totalNetworkStakedLPT)
+
+
+  /**
+   * Tries to estimate daliy fee earnings based on the input stake vs network traffic and orchestrator data
+   * @param {int} totalStreamdMinutes weekly total streamed minutes for the livepeer network
+   * @param {int} stake total stake of the orchestrator || stake to be delegated
+   * @param {int} weiPerPixel wei per pixel set by the orchestrator
+   * @returns returns eth total rounded to four decimal places
+   */
+  const calculateDailyEthFee = (stake) => {
+    const pixelsInOneSecond = 5944.32 * 1000000 //Based on streamflows economical model
+    return ((pixelsInOneSecond * totalStreamedMinutes * calculateStakePercent(stake) * weiPerPixel) / (10 ** 18)).toFixed(4)
+  }
+
+  /**
+   * Tries to estimate daliy fee earnings based on the input stake vs network traffic and orchestrator data
+   * @param {*} stake total stake of the orchestrator || stake to be delegated
+   * @param {*} currentInflationRate inflation rate of the Lpt network
+   * @param {*} totalNetworkLPT total Lpt distributed
+   * @returns 
+   */
+  const calculateDailiyLptReward = (stake) =>
+    calculateStakePercent(stake) * (currentInflationRate / 100) * totalNetworkLPT
+
+  /**
+   * 
+   * @param {*} newTotalStake
+   * @param {*} oldTotalStake 
+   * @returns integer % increase
+   */
+  const calculateDailiyLptRewardPercentIncrease = (newTotalStake, oldTotalStake) =>
+    ((calculateDailiyLptReward(newTotalStake) - calculateDailiyLptReward(oldTotalStake)) / calculateDailiyLptReward(oldTotalStake)) * 100
+
+  /**
+   * 
+   * @param {*} newTotalStake 
+   * @param {*} oldTotalStake 
+   * @returns 
+   */
+  const stakedLPTpercentIncrease = (newTotalStake, oldTotalStake) =>
+    ((calculateStakePercent( newTotalStake) - calculateStakePercent(oldTotalStake)) / calculateStakePercent(oldTotalStake)) * 100
+
+
+  /**
+   * 
+   * @param {*} newTotalStake 
+   * @param {*} oldTotalStake 
+   * @returns 
+   */
+   const calculateDailyEthFeePercentIncrease = (newTotalStake, oldTotalStake) =>
+    ((calculateDailyEthFee(newTotalStake) - calculateDailyEthFee(oldTotalStake)) / calculateDailyEthFee(oldTotalStake)) * 100
+
+  /**
+   * 
+   * @returns 
+   */
+  const calculateDelegatedEthFee = () => 
+    (calculateDailyEthFee(totalStake) - calculateDailyEthFee(totalStake) * ethFee) * (delegatedStake / totalStake)
+
+  /**
+   * 
+   * @returns 
+   */
+  const calculateDelegatedLptRewards = () => 
+    (calculateDailiyLptReward(totalStake) - calculateDailiyLptReward(totalStake) * ethFee) * (delegatedStake / totalStake)
+
+
 
 
   const setAmountToDelegate = (data) => {
 
     if (typeof data != "string") return false // we only process strings!  
     if (isNaN(data) || isNaN(parseFloat(data))) {
-      setDelegateStake(0);
-      setTotalStake(totalStake - delegateStake);
+      setdelegatedStake(0);
+      setTotalStake(totalStake - delegatedStake);
       data !== "" && alert("Input a number");
       return false
     }
 
     var newData = parseInt(data)
-    if (delegateStake === 0) newData = delegateStake + newData
-    setTotalStake(totalStake + newData - delegateStake)
-    setDelegateStake(newData);
+    if (delegatedStake === 0) newData = delegatedStake + newData
+    setTotalStake(totalStake + newData - delegatedStake)
+    setdelegatedStake(newData);
 
   }
 
 
-  const calculateStakePercent = (stake) => {
-    return stake / totalNetworkStakedLPT
-  }
-
-  const calculateETHminigReward = () => {
-    return ((pixelsInOneSecond * totalStreamedMinutes * (totalStake / totalNetworkStakedLPT) * 1000000 * weiPerPixel) / (10 ** 18)).toFixed(4)
-
-  }
-
-  const calculateEthperround = () => {
-    return (calculateETHminigReward() - calculateETHminigReward() * lptFee) * delegateStake / totalStake
-
-  }
-
-
-  const calculateLPTReward = (stake) => {
-    return ((calculateStakePercent(stake)) * ((currentInflationRate * totalNetworkLPT) / 100) * 7)
-  }
-
-  const calculatePercentIncrease = () => {
-
-    return (calculateLPTReward(totalStake) - calculateLPTReward(totalStake - delegateStake)) / calculateLPTReward(totalStake - delegateStake) * 100
-  }
-
-  const percentIncreaseDelegatedLPT = () => {
-    return ((totalStake - (totalStake - delegateStake)) / (totalStake - delegateStake)) * 100
-  }
-
-  const calculateLPTperround = () => {
-    return (calculateLPTReward(totalStake) - calculateLPTReward(totalStake) * lptFee) * delegateStake / totalStake
-
-  }
 
   const calculator = () => {
     return (
       <>
-        <p className="text-center text-white text-xl py-5">LPT amount to delegate</p>
+        <p className="text-center text-white text-xl py-5">Lpt amount to delegate</p>
         <input className="bg-gray w-1/2 mx-auto rounded-xl text-white text-center py-2 px-5 text-xl	"
-          value={delegateStake}
+          value={delegatedStake}
           onChange={(e) => setAmountToDelegate(e.target.value)}
         />
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total delegated LPT"} data={totalStake} increase={percentIncreaseDelegatedLPT().toFixed(0)} />
-            <DataTooltipSquare label={"Network stake %"} data={(calculateStakePercent(totalStake) * 100).toFixed(5)} />
-            <DataTooltipSquare label={"LPT reward"} data={calculateLPTReward(totalStake).toFixed(1)} increase={calculatePercentIncrease().toFixed(1)} />
-            <DataTooltipSquare label={"ETH mining reward"} data={calculateETHminigReward()} increase={calculatePercentIncrease().toFixed(0)} />
+            <DataTooltipSquare
+              label={"Total delegated Lpt"}
+              data={totalStake}
+              increase={(((totalStake - (totalStake - delegatedStake))/(totalStake - delegatedStake)*100).toFixed(2))}
+            />
+            <DataTooltipSquare
+              label={"Network stake %"}
+              data={(calculateStakePercent(totalStake, totalNetworkLPT) * 100).toFixed(4)}
+              increase={stakedLPTpercentIncrease(totalStake, totalStake - delegatedStake).toFixed(2)}
+            />
+            <DataTooltipSquare
+              label={"LPT rewards(7 days)"}
+              data={(calculateDailiyLptReward(totalStake)*7).toFixed(2)}
+              increase={calculateDailiyLptRewardPercentIncrease(totalStake, totalStake - delegatedStake).toFixed(2)}
+            />
+            <DataTooltipSquare 
+              label={"ETH fees (7 days)"} 
+              data={(calculateDailyEthFee(totalStake)*7).toFixed(4)} 
+              increase={(calculateDailyEthFeePercentIncrease(totalStake, totalStake - delegatedStake)).toFixed(2)} 
+            />
           </div>
         </div>
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Delegator rewards and info</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Delegated LPT"} data={delegateStake} owner={((delegateStake / totalStake) * 100).toFixed(1)} />
-            <DataTooltipSquare label={"LPT weekly"} data={calculateLPTperround().toFixed(1)} />
-            <DataTooltipSquare label={"ETH fees reward"} data={calculateEthperround().toFixed(5)} />
+            <DataTooltipSquare 
+              label={"Delegated LPT"} 
+              data={delegatedStake} 
+              owner={((delegatedStake / totalStake) * 100).toFixed(2)} 
+            />
+            <DataTooltipSquare 
+              label={"LPT rewards(7 days)"} 
+              data={(calculateDelegatedLptRewards()*7).toFixed(2)} 
+            />
+            <DataTooltipSquare 
+              label={"ETH fees reward"} 
+              data={(calculateDelegatedEthFee()*7).toFixed(4)} 
+            />
           </div>
         </div>
       </>
     )
   }
 
-  const renderCurrentData = () => {
+  const renderOrchestratorInfo = () => {
     return (
       <>
         <p className="text-center text-white text-xl py-5">Orchestrator address</p>
@@ -168,23 +233,25 @@ export default function Home() {
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total LPT"} data={totalNetworkLPT} />
-            <DataTooltipSquare label={"Total LPT stake"} data={totalNetworkStakedLPT} />
+            <DataTooltipSquare label={"Total Lpt"} data={totalNetworkLPT} />
+            <DataTooltipSquare label={"Total Lpt stake"} data={totalNetworkStakedLPT} />
             <DataTooltipSquare label={"Weekly minutes streamed"} data={totalStreamedMinutes} />
-            <DataTooltipSquare label={"LPT inflation rate"} data={currentInflationRate} />
-
+            <DataTooltipSquare label={"Lpt inflation rate %"} data={currentInflationRate} />
           </div>
         </div>
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total delegated LPT"} data={totalStake} />
-            <DataTooltipSquare label={"Network stake %"} data={((totalStake / totalNetworkStakedLPT)*100).toFixed(2)} />
+            <DataTooltipSquare label={"Total delegated Lpt"} data={totalStake} />
+            <DataTooltipSquare
+              label={"Network stake %"}
+              data={(calculateStakePercent(totalStake)*100).toFixed(4)} 
+            />
             <DataTooltipSquare label={"Wei per pixel"} data={weiPerPixel} />
-            <DataTooltipSquare label={"Current activity"} data={active ? "Online" : "Offline"}   />
+            <DataTooltipSquare label={"Current activity"} data={active ? "Online" : "Offline"} />
           </div>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"LPT reward cut %"} data={lptFee * 100} />
+            <DataTooltipSquare label={"Lpt reward cut %"} data={lptFee * 100} />
             <DataTooltipSquare label={"ETH reward cut %"} data={ethFee * 100} />
             <DataTooltipSquare label={"Active since round"} data={activationRound} />
             <DataTooltipSquare label={"Status"} data={status} />
@@ -194,10 +261,12 @@ export default function Home() {
           <p className="text-white text-xl my-8 border-b w-full">Estimated orchestrator rewards (7 days)</p>
           <div className="flex flex-col justify-center">
             <div className="text-white flex flex-col sm:flex-row mb-3">
-              <p className="text-gray-light text-lg mr-3">Transcoding (eth):</p> network stake % * total pixels streamed * wei per pixel = {((pixelsInOneSecond * totalStreamedMinutes * (totalStake / totalNetworkStakedLPT) * 1000000 * weiPerPixel) / (10 ** 18)).toFixed(4)}
+              <p className="text-gray-light text-lg mr-3">Transcoding (eth):</p>
+                network stake % * total pixels streamed * wei per pixel = {(calculateDailyEthFee(totalStake) * 7).toFixed(4)}
             </div>
             <div className="text-white flex flex-col sm:flex-row mb-3">
-              <p className="text-gray-light text-lg mr-3">Inflation adjustment (lpt):</p> network stake % * lpt distributed per round * 7 = {((totalStake / totalNetworkStakedLPT) * ((currentInflationRate * totalNetworkLPT) / 100) * 7).toFixed(0)}
+              <p className="text-gray-light text-lg mr-3">Inflation adjustment (Lpt):</p>
+               network stake % * Lpt distributed per round * 7 = {(calculateDailiyLptReward(totalStake) * 7).toFixed(2)}
             </div>
           </div>
         </div>
@@ -209,11 +278,11 @@ export default function Home() {
 
     switch (selected) {
       case 0:
-        return renderCurrentData();
+        return renderOrchestratorInfo();
       case 1:
         return calculator()
       default:
-        return renderCurrentData();
+        return renderOrchestratorInfo();
     }
   }
 
