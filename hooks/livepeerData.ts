@@ -5,11 +5,11 @@ import { useEffect, useState } from 'react';
 const livepeerDataHook = () => {
 
     const [livepeerData, setLivepeerData ] = useState({
-        inflation:"",
-        inflationChange:0,
-        totalActiveStake:"",
-        totalSupply:"",
-        weeklyMinutesStreamed: ""
+        inflation: 0,
+        inflationChange: 0,
+        totalActiveStake: 0.0,
+        totalSupply: 0.0,
+        weeklyMinutesStreamed: 0
     })
 
     useEffect(() => {
@@ -30,11 +30,11 @@ const livepeerDataHook = () => {
             const data = response.data.data.protocol
 
             const dataToInt = {
-                inflation: (parseInt(data.inflation)/10000000).toFixed(5),
+                inflation: (parseInt(data.inflation)/10000000),
                 inflationChange:parseInt(data.inflationChange),
-                totalActiveStake: parseFloat(data.totalActiveStake).toFixed(0),
-                totalSupply:parseFloat(data.totalSupply).toFixed(0),
-                weeklyMinutesStreamed: "398470"
+                totalActiveStake: parseInt(data.totalActiveStake.split(".")[0]),
+                totalSupply: parseInt(data.totalSupply.split(".")[0]),
+                weeklyMinutesStreamed: 398470
             }
             setLivepeerData(dataToInt);
         }).catch((e) => {

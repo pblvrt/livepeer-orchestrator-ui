@@ -1,6 +1,15 @@
 
-export const calculations = (
-  stake:number,
+/**
+ * 
+ * @param currentOrchestratorStake 
+ * @param totalNetworkLPT 
+ * @param totalNetworkStakedLPT 
+ * @param totalStreamedMinutes 
+ * @param weiPerPixel 
+ * @param currentInflationRate  
+ */
+ const calculations = (
+  currentOrchestratorStake:number,
   totalNetworkLPT:number,
   totalNetworkStakedLPT:number,
   totalStreamedMinutes:number,
@@ -9,70 +18,83 @@ export const calculations = (
 ) => {
 
   /**
-   * 
-   * @param {int} stake : stake to calculate % of against total network stake
-   * @returns returns int
+   * @description Calculates % of stake ownership relative to total LPT as string
+   * @param {int} stake will delfault to currentOrchestratorStake
+   * @returns {string} returns precentage as string
    */
-  const calculateStakePercent = (stake:number) => (stake / totalNetworkStakedLPT)
-
+  const calculateStakeOwnershipPercent = ( stake:number = currentOrchestratorStake ): string => {
+    return ((stake / totalNetworkStakedLPT) * 100).toFixed(4)
+  }
+ 
 
   /**
-   * Calculates aproximate dailiy eth fee gains based solely on staked %
-   * @returns ether value (int)
+   * @description Calculates stake ownership relative to total LPT for a specifc stake
+   * @param {int} stake
+   * @returns {number} returns precentage as string
    */
-  const calculateDailyEthFee = (stake:number) => {
+   const calculateStakeOwnership = ( stake:number ): number => (stake / totalNetworkStakedLPT)
+
+
+   /**
+    * @description 
+    * @param stake 
+    * @returns {number}
+    */
+  const calculateEthFee = ( stake:number = currentOrchestratorStake ): number => {
     const pixelsInOneSecond = 5944.32 * 1000000 //Based on streamflows economical model
-    return ((pixelsInOneSecond * totalStreamedMinutes * calculateStakePercent(stake) * weiPerPixel) / (10 ** 18))
+    return ((pixelsInOneSecond * totalStreamedMinutes * calculateStakeOwnership(stake) * weiPerPixel) / (10 ** 18))
   }
 
-  /**
-   * Calculates daily LTP returns based on orchestrator stake %
-   * @returns number
-   */
-  const calculateDailiyLptReward = (stake:number) =>
-     calculateStakePercent(stake) * (currentInflationRate / 100) * totalNetworkLPT
 
-  /**
-   * Calculates daily LPT Reward increase based on the stake to delegate
-   * @returns number
-   */
-  const calculateDailiyLptRewardPercentIncrease = ( delegatedStake:number ) =>
-    ((calculateDailiyLptReward(stake + delegatedStake) - calculateDailiyLptReward(stake)) / calculateDailiyLptReward(stake)) * 100
+   /**
+    * @description 
+    * @param stake 
+    * @returns {number}
+    */
+  const calculateDailiyLptReward = ( stake:number = currentOrchestratorStake ): number => {
+    return calculateStakeOwnership(stake) * (currentInflationRate / 100) * totalNetworkLPT
+  }
+
+  // /**
+  //  * Calculates daily LPT Reward increase based on the stake to delegate
+  //  * @returns number
+  //  */
+  // const calculateDailiyLptRewardPercentIncrease = ( delegatedStake:number ) =>
+  //   ((calculateDailiyLptReward(stake + delegatedStake) - calculateDailiyLptReward(stake)) / calculateDailiyLptReward(stake)) * 100
 
  
-  const stakedLPTpercentIncrease = (delegatedStake:number) =>
-    ((calculateStakePercent( stake + delegatedStake ) - calculateStakePercent(stake)) / calculateStakePercent(stake)) * 100
+  // const stakedLPTpercentIncrease = (delegatedStake:number) =>
+  //   ((calculateStakePercent( stake + delegatedStake ) - calculateStakePercent(stake)) / calculateStakePercent(stake)) * 100
 
 
 
 
-  return {
-    calculateStakePercent,
-    calculateDailyEthFee,
+   return {
+    calculateStakeOwnershipPercent,
+    calculateEthFee,
     calculateDailiyLptReward
   }
 
 
 
-  //  const calculateDailyEthFeePercentIncrease = () =>
-  //   ((calculateDailyEthFee(stake + delegatedStake) - calculateDailyEthFee(stake)) / calculateDailyEthFee(stake)) * 100
+  // //  const calculateDailyEthFeePercentIncrease = () =>
+  // //   ((calculateDailyEthFee(stake + delegatedStake) - calculateDailyEthFee(stake)) / calculateDailyEthFee(stake)) * 100
 
-  // /**
-  //  * 
-  //  * @returns 
-  //  */
-  // const calculateDelegatedEthFee = () => 
-  //   (calculateDailyEthFee(totalStake) - calculateDailyEthFee(totalStake) * ethFee) * (delegatedStake / totalStake)
+  // // /**
+  // //  * 
+  // //  * @returns 
+  // //  */
+  // // const calculateDelegatedEthFee = () => 
+  // //   (calculateDailyEthFee(totalStake) - calculateDailyEthFee(totalStake) * ethFee) * (delegatedStake / totalStake)
 
-  // /**
-  //  * 
-  //  * @returns 
-  //  */
-  // const calculateDelegatedLptRewards = () => 
-  //   (calculateDailiyLptReward(totalStake) - calculateDailiyLptReward(totalStake) * ethFee) * (delegatedStake / totalStake)
-
-
-
+  // // /**
+  // //  * 
+  // //  * @returns 
+  // //  */
+  // // const calculateDelegatedLptRewards = () => 
+  // //   (calculateDailiyLptReward(totalStake) - calculateDailiyLptReward(totalStake) * ethFee) * (delegatedStake / totalStake)
 
 
 }
+
+export default calculations;
