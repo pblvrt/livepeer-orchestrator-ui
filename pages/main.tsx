@@ -1,82 +1,43 @@
 
-import React from "react"
+import React, { useState } from "react"
 //Components
-import DataTooltipSquare from '../components/dataTooltipSquare';
-import AddressInput from '../components/addressInput';
-import AlertMessage from '../components/alertMessage';
-//Hooks
-import livepeerDataHook from '../hooks/livepeerData';
-import orchestratorDataHook from '../hooks/orchestratorData';
-import calculations from "../hooks/calculations";
+import OrchestratorInfo from '../components/orchestratorInfoPage/orchestratorInfo';
 
 export default function Home() {
 
+  const [selected, setSelected] = useState(0)
 
-  const { livepeerData } = livepeerDataHook();
+  const renderTabs = () => {
 
-  const {
-    submit,
-    alertMessage,
-    orchestratorData,
-    pricePerPixel
-  } = orchestratorDataHook();
-
-  const {
-    calculateStakeOwnershipPercent,
-    calculateEthFee,
-    calculateDailiyLptReward
-  } = calculations(
-    orchestratorData.stake,
-    livepeerData.totalSupply,
-    livepeerData.totalActiveStake,
-    livepeerData.weeklyMinutesStreamed,
-    pricePerPixel,
-    livepeerData.inflation
-  );
+    switch (selected) {
+      case 0:
+        return <OrchestratorInfo/>;
+      case 1:
+        return <></>
+      default:
+        return <OrchestratorInfo/>;
+    }
+  }
 
 
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
       <div className="max-w-4xl	 md:mx-auto my-5 md:my-10 mb-auto flex flex-col items-center">
-        <AlertMessage alertMessage={alertMessage} />
-        <AddressInput submit={submit} />
-        <div className="mx-auto w-full px-3">
-          <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
-          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total Lpt"} data={livepeerData.totalSupply} />
-            <DataTooltipSquare label={"Total Lpt stake"} data={livepeerData.totalActiveStake} />
-            <DataTooltipSquare label={"Weekly  streamed"} data={livepeerData.weeklyMinutesStreamed} />
-            <DataTooltipSquare label={"Lpt inflation rate %"} data={livepeerData.inflation} />
+        <div className="flex flex-row w-full ">
+          <div className={`text-lg cursor-pointer w-1/3 text-center ${selected === 0 ? "border-b text-green border-green" : "text-gray"}`}
+            onClick={() => setSelected(0)}>
+            Orchestrator info
+          </div>
+          <div className={`text-lg cursor-pointer w-1/3 text-center ${selected === 1 ? "border-b text-green border-green" : "text-gray"}`}
+            onClick={() => setSelected(1)}>
+            Delegate calculator
+          </div>
+          <div className={` text-lg  w-1/3 text-center ${selected === 2 ? "border-b border-green" : "text-gray"}`}
+            onClick={() => setSelected(0)}>
+            Theoretical limit
           </div>
         </div>
-        <div className="mx-auto w-full px-3">
-          <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
-          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total delegated Lpt"} data={orchestratorData.stake} />
-            <DataTooltipSquare label={"Network stake %"} data={calculateStakeOwnershipPercent()} />
-            <DataTooltipSquare label={"Wei per pixel"} data={pricePerPixel} />
-            <DataTooltipSquare label={"Current activity"} data={orchestratorData.active} />
-          </div>
-          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Lpt reward cut %"} data={orchestratorData.lptFee} />
-            <DataTooltipSquare label={"ETH reward cut %"} data={orchestratorData.ethFee} />
-            <DataTooltipSquare label={"Active since round"} data={orchestratorData.activationRound} />
-            <DataTooltipSquare label={"Status"} data={orchestratorData.status} />
-          </div>
-        </div>
-        <div className="mx-auto w-full px-3">
-          <p className="text-white text-xl my-8 border-b w-full">Estimated orchestrator rewards (7 days)</p>
-          <div className="flex flex-col justify-center">
-            <div className="text-white flex flex-col sm:flex-row mb-3">
-              <p className="text-gray-light text-lg mr-3">Transcoding (eth):</p>
-                network stake % * total pixels streamed * wei per pixel = {calculateEthFee().toFixed(5)}
-            </div>
-            <div className="text-white flex flex-col sm:flex-row mb-3">
-              <p className="text-gray-light text-lg mr-3">Inflation adjustment (Lpt):</p>
-                network stake % * Lpt distributed per round * 7 = {(calculateDailiyLptReward()*7).toFixed(1)}
-            </div>
-          </div>
-        </div>
+        {renderTabs()}
       </div>
     </div>
   )

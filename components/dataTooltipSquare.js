@@ -5,7 +5,7 @@ export default function DataTooltipSquare({ ...props }) {
 
 
     return (
-        <div className=" flex justify-center items-center shadow-xl text-white w-44 h-20 rounded-xl border-2 border-gray mx-3 my-3">
+        <div className=" flex justify-center items-center shadow-xl text-white w-34 sm:w-44 h-20 rounded-xl border-2 border-gray mx-3 my-3">
             <div className="self-center m-auto px-3">
                 <label className="text-gray-light text-md">
                     {props.label}

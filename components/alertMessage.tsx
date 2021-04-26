@@ -11,6 +11,7 @@ const AlertMessage = ({ alertMessage }) => {
     useEffect(() => {
         setLocalAlertMessage(alertMessage)
     }, [alertMessage])
+    
     return (
         <>
             {localAlertMessage.active &&
