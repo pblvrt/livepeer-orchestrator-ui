@@ -6,8 +6,12 @@ import livepeerDataHook from '../hooks/livepeerData';
 
 export default function Home() {
 
-  const data = livepeerDataHook();
+
+  const { livepeerData } = livepeerDataHook();
  
+  useEffect(() => {
+    console.log(livepeerData)
+  }, [livepeerData])
 
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
@@ -18,10 +22,10 @@ export default function Home() {
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total Lpt"} data={""} />
-            <DataTooltipSquare label={"Total Lpt stake"} data={""} />
-            <DataTooltipSquare label={"Weekly minutes streamed"} data={""} />
-            <DataTooltipSquare label={"Lpt inflation rate %"} data={""} />
+            <DataTooltipSquare label={"Total Lpt"} data={livepeerData.totalSupply} />
+            <DataTooltipSquare label={"Total Lpt stake"} data={livepeerData.totalActiveStake} />
+            <DataTooltipSquare label={"Weekly  streamed"} data={livepeerData.weeklyMinutesStreamed} />
+            <DataTooltipSquare label={"Lpt inflation rate %"} data={livepeerData.inflation} />
           </div>
         </div>
         <div className="mx-auto w-full px-3">
