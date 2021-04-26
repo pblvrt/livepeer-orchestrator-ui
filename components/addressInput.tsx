@@ -1,7 +1,13 @@
 import { useState } from "react"
 
-
-const AddressInput = () => {
+/**
+ * 
+ * @param sumbit: function defined in orchestratorDataHook, will trigger a orchestrator address search
+ * @returns AddressInput component
+ */
+const AddressInput = ({
+    submit
+}) => {
     const [transcoderAddress, setTranscoderAddress] = useState("");
 
     return (
@@ -12,7 +18,9 @@ const AddressInput = () => {
                 value={transcoderAddress}
                 onChange={(e: { target: { value: string; }; }) => setTranscoderAddress(e.target.value)}
             />
-            <div className="w-8 ml-3 cursor-pointer">
+            <div className="w-8 ml-3 cursor-pointer"
+                 onClick={() => submit(transcoderAddress)}
+            >
                 <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 512 512" >
                     <g>
                         <g>

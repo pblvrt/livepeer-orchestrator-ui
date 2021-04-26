@@ -1,24 +1,24 @@
 
 import React, { useState, useEffect } from "react"
+//Components
 import DataTooltipSquare from '../components/dataTooltipSquare';
 import AddressInput from '../components/addressInput';
+import AlertMessage from '../components/alertMessage';
+//Hooks
 import livepeerDataHook from '../hooks/livepeerData';
+import orchestratorDataHook from '../hooks/orchestratorData';
 
 export default function Home() {
 
 
   const { livepeerData } = livepeerDataHook();
- 
-  useEffect(() => {
-    console.log(livepeerData)
-  }, [livepeerData])
+  const { submit, orchestratorData, alertMessage } = orchestratorDataHook()
 
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
       <div className="max-w-4xl	 md:mx-auto my-5 md:my-10 mb-auto flex flex-col items-center">
-
-        <p className="text-center text-white text-xl py-5">Orchestrator address</p>
-        <AddressInput />
+        <AlertMessage alertMessage={alertMessage}/> 
+        <AddressInput submit={submit}/>
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">

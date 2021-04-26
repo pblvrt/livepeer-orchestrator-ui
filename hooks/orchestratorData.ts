@@ -13,6 +13,11 @@ const orchestratorDataHook = () => {
         status: ""
     });
 
+    const [alertMessage, setAlertMessage] = useState({
+        active: false,
+        message: ""
+    })
+
     const fetchOrchestratorData = async (orchestratorAddress:string) => {
         axios.post('https://api.thegraph.com/subgraphs/name/livepeer/livepeer', {
             query: `{
@@ -28,9 +33,14 @@ const orchestratorDataHook = () => {
                   }
             }`
         }).then((response) => {
-            const data = response.data.data.protocol
-
-
+            const data = response.data
+            console.log(data.data.transcoders)
+            if(data.data.transcoders.length == 0) {
+                setAlertMessage({
+                    active: true,
+                    message: "This address was not found"
+                });
+            }
         }).catch((e) => {
             console.log(e);
         })
@@ -38,9 +48,17 @@ const orchestratorDataHook = () => {
 
     const submit = (orchestratorAddress:string) => {
 
+        if(orchestratorAddress === ""){
+            setAlertMessage({
+                active: true,
+                message: "Address cannot be empty"
+            })
+            return
+        }
+        fetchOrchestratorData(orchestratorAddress);
     }
 
-    return { orchestratorData, submit }
+    return { orchestratorData, submit, alertMessage }
 }
 
 export default orchestratorDataHook;
