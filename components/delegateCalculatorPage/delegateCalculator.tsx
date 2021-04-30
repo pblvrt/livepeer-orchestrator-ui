@@ -1,32 +1,34 @@
 
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
+//layout
+import GeneralLayout from '../layouts/generalLayout';
 //Components
 import DataTooltipSquare from '../dataTooltipSquare';
 import DelgateInput from '../delegateCalculatorPage/delegateInput';
+import TimeRangePicker from './timeRangePicker'
 //Hooks
 import livepeerDataHook from '../../hooks/livepeerData';
-import orchestratorDataHook from '../../hooks/orchestratorData';
 import calculations from "../../hooks/calculations";
 
-const DelegateCalculator = () => {
+const DelegateCalculator = ({
+    orchestratorData,
+    pricePerPixel
+}) => {
 
     const [delegatedStake, setdelegatedStake] = useState(0);
 
     const { livepeerData } = livepeerDataHook();
 
-    const {
-        submit,
-        alertMessage,
-        orchestratorData,
-        pricePerPixel
-    } = orchestratorDataHook();
-
+    const [timeRange, setTimeRange] = useState(7)
     const {
         calculateStakeOwnershipPercent,
+        calculateStakeOwnership,
         calculateEthFee,
-        calculateDailiyLptReward
+        calculateDailiyLptReward,
+        calculateDelegatedLptRewards,
+        calculateDelegatedETHRewards
     } = calculations(
-        orchestratorData.stake + delegatedStake,
+        orchestratorData.stake,
         livepeerData.totalSupply,
         livepeerData.totalActiveStake,
         livepeerData.weeklyMinutesStreamed,
@@ -34,36 +36,65 @@ const DelegateCalculator = () => {
         livepeerData.inflation
     );
 
-    useEffect(() => {
-        submit("0xc08dbaf4fe0cbb1d04a14b13edef38526976f2fb");
-    }, [])
+    const calculatePercetChange = (newValue:number, current:number):string => {
+        return ((newValue - current)/(current)*100).toFixed(2)
+    }
 
     return (
-        <div className="flex flex-col w-full">
+        <GeneralLayout>
             <p className="text-center text-white text-xl py-5">Lpt amount to delegate</p>
             <DelgateInput
                 delegatedStake={delegatedStake}
                 setdelegatedStake={setdelegatedStake}
-                alertMessage={alertMessage}
+                alertMessage={""}
             />
             <div className="mx-auto w-full px-3">
                 <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
                 <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
                     <DataTooltipSquare
-                        label={"Total delegated Lpt"}
-                        data={orchestratorData.stake}
-                        increase={""}
+                        label={"Total delegated Lpt"} 
+                        data={orchestratorData.stake + delegatedStake} 
+                        increase={calculatePercetChange(orchestratorData.stake+delegatedStake, orchestratorData.stake)}
                     />
-
+                    <DataTooltipSquare
+                        label={"Network stake %"} 
+                        data={calculateStakeOwnershipPercent()}
+                        increase={calculatePercetChange(calculateStakeOwnership(orchestratorData.stake+delegatedStake), calculateStakeOwnership(orchestratorData.stake))}
+                    />
+                    <DataTooltipSquare
+                        label={"LPT rewards"}
+                        data={(calculateDailiyLptReward(orchestratorData.stake+delegatedStake)*7).toFixed(2)}
+                        increase={calculatePercetChange(calculateDailiyLptReward(orchestratorData.stake+delegatedStake)*7, calculateDailiyLptReward()*7)}
+                    />
+                    <DataTooltipSquare
+                        label={"ETH rewards"}
+                        data={(calculateEthFee(orchestratorData.stake+delegatedStake)).toFixed(5)}
+                        increase={calculatePercetChange(calculateEthFee(orchestratorData.stake+delegatedStake), calculateEthFee())}
+                    />
                 </div>
             </div>
             <div className="mx-auto w-full px-3">
-                <p className="text-white text-xl my-8 border-b w-full">Delegator rewards and info</p>
+                <div className="flex flex-row text-white text-xl my-8 border-b w-full">
+                    <p> Delegator rewards and info </p>
+                    <TimeRangePicker setTimeRange={setTimeRange} />    
+                </div>
                 <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-
+                    <DataTooltipSquare 
+                        label={"% ownership"} 
+                        data={delegatedStake} 
+                        owner={((delegatedStake / (orchestratorData.stake + delegatedStake)) * 100).toFixed(2)} 
+                    />
+                    <DataTooltipSquare 
+                        label={"LPT rewards"} 
+                        data={(calculateDelegatedLptRewards(delegatedStake, orchestratorData.lptFee)*timeRange).toFixed(2)} 
+                    />
+                    <DataTooltipSquare 
+                        label={"ETH fees reward"} 
+                        data={(calculateDelegatedETHRewards(delegatedStake, orchestratorData.ethFee)*timeRange).toFixed(4)} 
+                    />
                 </div>
             </div>
-        </div>
+        </GeneralLayout>
     )
 }
 

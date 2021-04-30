@@ -39,7 +39,8 @@
     ((calculateDailiyLptReward(newTotalStake) - calculateDailiyLptReward(oldTotalStake)) / calculateDailiyLptReward(oldTotalStake))*100
  
  
- 
+  export const calculateDelegatedLptRewards = () => 
+    (calculateDailiyLptReward(totalStake) - calculateDailiyLptReward(totalStake) * ethFee) * (delegatedStake / totalStake)
     /*
   const calculateEthperround = () => {
     return (calculateETHminigReward() - calculateETHminigReward() * lptFee) * delegateStake / totalStake

@@ -30,7 +30,7 @@
   /**
    * @description Calculates stake ownership relative to total LPT for a specifc stake
    * @param {int} stake
-   * @returns {number} returns precentage as string
+   * @returns {number}
    */
    const calculateStakeOwnership = ( stake:number ): number => (stake / totalNetworkStakedLPT)
 
@@ -52,47 +52,44 @@
     * @returns {number}
     */
   const calculateDailiyLptReward = ( stake:number = currentOrchestratorStake ): number => {
+    // console.log("currenet orchestrator stake", currentOrchestratorStake)
+    // console.log("recived stake", stake)
     return calculateStakeOwnership(stake) * (currentInflationRate / 100) * totalNetworkLPT
   }
 
-  // /**
-  //  * Calculates daily LPT Reward increase based on the stake to delegate
-  //  * @returns number
-  //  */
-  // const calculateDailiyLptRewardPercentIncrease = ( delegatedStake:number ) =>
-  //   ((calculateDailiyLptReward(stake + delegatedStake) - calculateDailiyLptReward(stake)) / calculateDailiyLptReward(stake)) * 100
 
- 
-  // const stakedLPTpercentIncrease = (delegatedStake:number) =>
-  //   ((calculateStakePercent( stake + delegatedStake ) - calculateStakePercent(stake)) / calculateStakePercent(stake)) * 100
-
-
-
-
-   return {
-    calculateStakeOwnershipPercent,
-    calculateEthFee,
-    calculateDailiyLptReward
+   /**
+    * 
+    * @param delegatedStake 
+    * @param LPTcut 
+    * @returns {number}
+    */
+  const calculateDelegatedLptRewards = (delegatedStake: number, LPTcut:number): number => {
+    console.log(LPTcut/100)
+    console.log(calculateDailiyLptReward()*(LPTcut/100));
+    return (calculateDailiyLptReward() - calculateDailiyLptReward() * (LPTcut/100)) * (delegatedStake / currentOrchestratorStake)
   }
 
 
+  /**
+   * 
+   * @param delegatedStake 
+   * @param ETHcut 
+   * @returns {number}
+   */
+  const calculateDelegatedETHRewards = (delegatedStake: number, ETHcut:number): number =>
+    (calculateEthFee() - calculateEthFee() * (ETHcut/100)) * (delegatedStake / currentOrchestratorStake)
+  
 
-  // //  const calculateDailyEthFeePercentIncrease = () =>
-  // //   ((calculateDailyEthFee(stake + delegatedStake) - calculateDailyEthFee(stake)) / calculateDailyEthFee(stake)) * 100
 
-  // // /**
-  // //  * 
-  // //  * @returns 
-  // //  */
-  // // const calculateDelegatedEthFee = () => 
-  // //   (calculateDailyEthFee(totalStake) - calculateDailyEthFee(totalStake) * ethFee) * (delegatedStake / totalStake)
-
-  // // /**
-  // //  * 
-  // //  * @returns 
-  // //  */
-  // // const calculateDelegatedLptRewards = () => 
-  // //   (calculateDailiyLptReward(totalStake) - calculateDailiyLptReward(totalStake) * ethFee) * (delegatedStake / totalStake)
+   return {
+    calculateStakeOwnership,
+    calculateStakeOwnershipPercent,
+    calculateEthFee,
+    calculateDailiyLptReward,
+    calculateDelegatedLptRewards,
+    calculateDelegatedETHRewards
+  }
 
 
 }

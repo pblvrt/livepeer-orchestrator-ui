@@ -1,5 +1,7 @@
 
 import React from "react"
+//layout
+import GeneralLayout from '../layouts/generalLayout';
 //Components
 import DataTooltipSquare from '../dataTooltipSquare';
 import AddressInput from './addressInput';
@@ -12,11 +14,12 @@ import calculations from "../../hooks/calculations";
 
 const OrchestratorInfo = ({
   orchestratorData,
-  submit,
   pricePerPixel,
   alertMessage,
+  submit,
+  orchestratorAddress,
+  setOrchestratorAddress
 }) => {
-
 
   const { livepeerData } = livepeerDataHook();
 
@@ -36,10 +39,14 @@ const OrchestratorInfo = ({
 
 
   return (
-    <div className="flex w-full">
-      <div className="max-w-4xl	md:mx-auto my-5 md:my-10 mb-auto flex flex-col items-center">
+      <GeneralLayout>
         <p className="text-center text-white text-xl py-5">Orchestrator address</p>
-            <AddressInput submit={submit} alertMessage={alertMessage}/>
+            <AddressInput 
+              submit={submit} 
+              orchestratorAddress={orchestratorAddress}
+              setOrchestratorAddress={setOrchestratorAddress}
+              alertMessage={alertMessage}
+            />
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Livepeer network stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
@@ -73,12 +80,11 @@ const OrchestratorInfo = ({
             </div>
             <div className="text-white flex flex-col sm:flex-row mb-3">
               <p className="text-gray-light text-lg mr-3">Inflation adjustment (Lpt):</p>
-                network stake % * Lpt distributed per round * 7 = {(calculateDailiyLptReward()*7).toFixed(1)}
+                network stake % * Lpt distributed per round * 7 = {(calculateDailiyLptReward()*7).toFixed(2)}
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </GeneralLayout>
   )
 }
 

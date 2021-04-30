@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type orchestratorDataType = {
     stake: number,
@@ -21,6 +21,8 @@ const orchestratorDataHook = () => {
         status: ""
     });
 
+    const [orchestratorAddress, setOrchestratorAddress] = useState("0xc08dbaf4fe0cbb1d04a14b13edef38526976f2fb")
+
     const [pricePerPixel, setPricePerpixel ] = useState(0)
 
     const [alertMessage, setAlertMessage] = useState({
@@ -28,7 +30,11 @@ const orchestratorDataHook = () => {
         message: ""
     })
 
-    const fetchOrchestratorData = async ( orchestratorAddress:string ) => {
+
+    useEffect(() => {
+        submit();
+    }, [])
+    const fetchOrchestratorData = async () => {
         axios.post('https://api.thegraph.com/subgraphs/name/livepeer/livepeer', {
             query: `{
                 transcoders(where: {id: "${orchestratorAddress}"}) {
@@ -69,7 +75,7 @@ const orchestratorDataHook = () => {
     }
 
 
-    const fetchOrchestratorPrice = ( orchestratorAddress:string ): void => {
+    const fetchOrchestratorPrice = (): void => {
 
         axios.get(`https://nyc.livepeer.com/orchestratorStats`).then((
             response
@@ -87,7 +93,7 @@ const orchestratorDataHook = () => {
     }
 
 
-    const submit = (orchestratorAddress:string): void => {
+    const submit = (): void => {
 
         if(orchestratorAddress === ""){
             setAlertMessage({
@@ -96,11 +102,18 @@ const orchestratorDataHook = () => {
             })
             return
         }
-        fetchOrchestratorData(orchestratorAddress);
-        fetchOrchestratorPrice(orchestratorAddress);
+        fetchOrchestratorData();
+        fetchOrchestratorPrice();
     }
 
-    return { orchestratorData, pricePerPixel, submit, alertMessage }
+    return { 
+        orchestratorData, 
+        pricePerPixel, 
+        submit, 
+        alertMessage,
+        orchestratorAddress,
+        setOrchestratorAddress
+    }
 }
 
 export default orchestratorDataHook;

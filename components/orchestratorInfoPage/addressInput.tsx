@@ -7,9 +7,10 @@ import { useState, useEffect } from "react"
  */
 const AddressInput = ({
     submit,
-    alertMessage
+    alertMessage,
+    orchestratorAddress,
+    setOrchestratorAddress
 }) => {
-    const [transcoderAddress, setTranscoderAddress] = useState("");
 
     const [localAlertMessage, setLocalAlertMessage ] = useState({
         active: false,
@@ -37,11 +38,11 @@ const AddressInput = ({
                     <input
                         className="bg-gray w-full text-white text-center text-lg"
                         placeholder="input orchestrator address"
-                        value={transcoderAddress}
-                        onChange={(e: { target: { value: string; }; }) => setTranscoderAddress(e.target.value)}
+                        value={orchestratorAddress}
+                        onChange={(e: { target: { value: string; }; }) => setOrchestratorAddress(e.target.value)}
                     />
                     <div className="w-8 ml-3 cursor-pointer"
-                        onClick={() => submit(transcoderAddress)}
+                        onClick={() => submit()}
                     >
                         <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 512 512" >
                             <g>

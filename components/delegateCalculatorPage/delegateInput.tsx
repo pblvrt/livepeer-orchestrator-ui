@@ -52,7 +52,7 @@ const DelegateInput = ({
                     </div>
                 </div>
             :
-                <input className="bg-gray  mx-auto rounded-xl text-white text-center py-2 px-5 text-xl	"
+                <input className="bg-gray  mx-auto rounded-xl text-white text-center py-2 px-5 text-xl"
                     value={delegatedStake}
                     onChange={(e) => setAmountToDelegate(e.target.value)}
                 />
