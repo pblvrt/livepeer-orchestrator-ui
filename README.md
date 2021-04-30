@@ -13,8 +13,7 @@ how much LPT and ETH they can earn from running an orchestrator.
 This project was funded with a livepeer grant. You can check out the grant proposal
 [here](https://github.com/livepeer/Grant-Program/issues/25) 
 
-Almost all of the calculations done in this project are based on the [livepeer orchestrator
-bussiness model] (https://forum.livepeer.org/t/livepeer-orchestrator-business-model-updates-and-grant-progress/1083)
+Almost all of the calculations done in this project are based on the [livepeer orchestrator bussiness model] (https://forum.livepeer.org/t/livepeer-orchestrator-business-model-updates-and-grant-progress/1083)
 propsed and developed by the chainflow team.
 
 
