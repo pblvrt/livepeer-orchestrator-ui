@@ -1,9 +1,18 @@
 import axios from 'axios';
 import { useState } from 'react';
 
+export type orchestratorDataType = {
+    stake: number,
+    lptFee: number,
+    ethFee: number,
+    activationRound: string,
+    active: string,
+    status: string
+}
+
 const orchestratorDataHook = () => {
 
-    const [orchestratorData, setOrchestratorData ] = useState({
+    const [orchestratorData, setOrchestratorData ] = useState<orchestratorDataType>({
         stake: 0,
         lptFee: 0,
         ethFee: 0,
@@ -60,7 +69,7 @@ const orchestratorDataHook = () => {
     }
 
 
-    const fetchOrchestratorPrice = ( orchestratorAddress:string ) => {
+    const fetchOrchestratorPrice = ( orchestratorAddress:string ): void => {
 
         axios.get(`https://nyc.livepeer.com/orchestratorStats`).then((
             response
@@ -78,7 +87,7 @@ const orchestratorDataHook = () => {
     }
 
 
-    const submit = (orchestratorAddress:string) => {
+    const submit = (orchestratorAddress:string): void => {
 
         if(orchestratorAddress === ""){
             setAlertMessage({

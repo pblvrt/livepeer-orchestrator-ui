@@ -2,24 +2,24 @@
 import React from "react"
 //Components
 import DataTooltipSquare from '../dataTooltipSquare';
-import AddressInput from '../addressInput';
-import AlertMessage from '../alertMessage';
+import AddressInput from './addressInput';
+//types
+import {orchestratorDataType} from '../../hooks/orchestratorData'
 //Hooks
 import livepeerDataHook from '../../hooks/livepeerData';
-import orchestratorDataHook from '../../hooks/orchestratorData';
 import calculations from "../../hooks/calculations";
 
-const orchestratorInfo = () => {
+
+const OrchestratorInfo = ({
+  orchestratorData,
+  submit,
+  pricePerPixel,
+  alertMessage,
+}) => {
 
 
   const { livepeerData } = livepeerDataHook();
 
-  const {
-    submit,
-    alertMessage,
-    orchestratorData,
-    pricePerPixel
-  } = orchestratorDataHook();
 
   const {
     calculateStakeOwnershipPercent,
@@ -82,4 +82,4 @@ const orchestratorInfo = () => {
   )
 }
 
-export default orchestratorInfo
+export default OrchestratorInfo
