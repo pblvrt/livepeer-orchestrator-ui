@@ -89,11 +89,11 @@ const orchestratorDataHook = () => {
 
     const fetchOrchestratorPrice = (): void => {
 
-        axios.get(`https://nyc.livepeer.com/orchestratorStats`).then((
+        axios.get(`https://nyc.livepeer.com/orchestratorStats?excludeUnavailable=False`).then((
             response
         ) => {
             const orchestratorData = response.data.filter((orchestrator) => orchestrator.Address === orchestratorAddress)
-            //console.log(orchestratorData)
+            console.log(orchestratorData)
             orchestratorData.length > 0 && setPricePerpixel(parseFloat(orchestratorData[0].PricePerPixel))
         }).catch((e) => {
             console.log(e)

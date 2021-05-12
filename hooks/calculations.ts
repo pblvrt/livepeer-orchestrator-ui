@@ -75,10 +75,12 @@
    * @param ETHcut 
    * @returns {number}
    */
-  const calculateDelegatedETHRewards = (delegatedStake: number, ETHcut:number): number =>
-    (calculateEthFee() - calculateEthFee() * (ETHcut/100)) * (delegatedStake / currentOrchestratorStake)
-  
-
+  const calculateDelegatedETHRewards = (delegatedStake: number, ETHcut:number): number =>{
+    console.log(calculateEthFee() * (delegatedStake / currentOrchestratorStake))
+    return (calculateEthFee() - calculateEthFee() * (ETHcut/100)) * (delegatedStake / currentOrchestratorStake)
+  }
+  const calculateRealDelegatedETHRewards = (delegatedStake: number, ETHcut:number): number =>
+    (calculateEthFee(154096) - calculateEthFee(154096) * (ETHcut/100)) * (delegatedStake / currentOrchestratorStake)
 
    return {
     calculateStakeOwnership,
@@ -86,7 +88,8 @@
     calculateEthFee,
     calculateDailiyLptReward,
     calculateDelegatedLptRewards,
-    calculateDelegatedETHRewards
+    calculateDelegatedETHRewards,
+    calculateRealDelegatedETHRewards
   }
 
 

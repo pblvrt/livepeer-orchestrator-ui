@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react"
 
 
-export default function StakeTooltipSquare({ ...props }) {
+export default function EthTooltipSquare({ ...props }) {
 
     const [isOverStaked, setIsOverStaked] = useState(false);
     const [showTooltip, setShowTooltip] = useState(false);
 
-    // LPT value. This value is obtained by http...
-    const maximumStake = 154096
+
+    const recomenderWeiPerPixel = 600
 
     useEffect(() => {
-
-        if(parseInt(props.data) > maximumStake){
+        console.log(parseInt(props.data) > recomenderWeiPerPixel)
+        
+        if(parseInt(props.data) > recomenderWeiPerPixel){
             console.log("is true")
             setIsOverStaked(true);
         }else{
@@ -24,7 +25,8 @@ export default function StakeTooltipSquare({ ...props }) {
             <>
                 <div className="absolute top-0 z-10 w-64 p-2 -mt-1 text-sm leading-tight text-white transform 
                                 -translate-y-full bg-green rounded-lg shadow-xl">
-                    <p className="mb-2">It's possible that this orchestrator is <b>overstaked</b>, reducing rewards generated for its delegators.</p>
+                    <p className="mb-2">This orchestrator did not adjust its wei per pixel value, 
+                        so it wont recive as much traffic as other orchestrators.</p>
                     <p>For more information visit {<a className="underline" href="">the documentation</a>}.</p>
                 </div>
                 <svg className="absolute z-10 w-6 h-6 text-green transform -translate-y-3 fill-current stroke-current" 

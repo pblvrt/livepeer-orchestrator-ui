@@ -34,7 +34,7 @@ const livepeerDataHook = () => {
                 inflationChange:parseInt(data.inflationChange),
                 totalActiveStake: parseInt(data.totalActiveStake.split(".")[0]),
                 totalSupply: parseInt(data.totalSupply.split(".")[0]),
-                weeklyMinutesStreamed: 398470
+                weeklyMinutesStreamed: 700000   
             }
             setLivepeerData(dataToInt);
         }).catch((e) => {

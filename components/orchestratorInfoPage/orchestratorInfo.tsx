@@ -5,6 +5,7 @@ import GeneralLayout from '../layouts/generalLayout';
 //Components
 import DataTooltipSquare from '../generalComponents/dataTooltipSquare';
 import StakeTooltipSquare from '../generalComponents/stakeTooltipSquare'; 
+import EthTooltipSquare from '../generalComponents/ethTooltipSquare';
 import AddressInput from './addressInput';
 //Hooks
 import livepeerDataHook from '../../hooks/livepeerData';
@@ -59,7 +60,7 @@ const OrchestratorInfo = ({
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
             <StakeTooltipSquare label={"Total delegated Lpt"} data={orchestratorData.stake} />
             <DataTooltipSquare label={"Network stake %"} data={calculateStakeOwnershipPercent()} />
-            <DataTooltipSquare label={"Wei per pixel"} data={pricePerPixel} />
+            <EthTooltipSquare label={"Wei per pixel"} data={pricePerPixel} />
             <DataTooltipSquare label={"Current activity"} data={orchestratorData.active} />
           </div>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
@@ -70,10 +71,10 @@ const OrchestratorInfo = ({
           </div>
         </div>
         <div className="mx-auto w-full px-3">
-          <p className="text-white text-xl my-8 border-b w-full">Estimated orchestrator rewards (7 days)</p>
+          <p className="text-white text-xl my-8 border-b w-full">Estimated orchestrator rewards (monthly)</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-3 justify-center w-full">  
-            <DataTooltipSquare label={"Transcoding (ETH)"} data={calculateEthFee().toFixed(3)} />
-            <DataTooltipSquare label={"Inflation (LPT)"} data={(calculateDailiyLptReward()*7).toFixed(2)} />
+            <DataTooltipSquare label={"Transcoding (ETH)"} data={(calculateEthFee()*4).toFixed(3)} />
+            <DataTooltipSquare label={"Inflation (LPT)"} data={(calculateDailiyLptReward()*30).toFixed(2)} />
             <div className="cursor-pointer flex justify-center text-lg items-center shadow-xl text-green 
                             h-20 rounded-xl border-green border-2  mx-3 my-3"
                  onClick={() => router.push(`/calculator?address=${orchestratorAddress}`)}                
