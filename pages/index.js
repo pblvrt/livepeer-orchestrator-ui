@@ -20,7 +20,6 @@ export default function Home() {
 
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
-      <div className="max-w-4xl	 w-full md:mx-auto mt-5 md:mt-10 mb-auto flex flex-col items-center">
         <OrchestratorInfo 
             alertMessage={alertMessage} 
             orchestratorData={orchestratorData} 
@@ -28,7 +27,6 @@ export default function Home() {
             orchestratorAddress={orchestratorAddress}
             setOrchestratorAddress={setOrchestratorAddress}
         />;
-      </div>
     </div>
   )
 }

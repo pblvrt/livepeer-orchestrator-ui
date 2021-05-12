@@ -26,7 +26,7 @@ const AddressInput = ({
 
     return (
 
-        <div className="w-full sm:w-3/4 mx-auto rounded-xl py-2 px-5">
+        <div className="w-full sm:w-3/5 mx-auto rounded-xl py-2 px-5">
             {localAlertMessage.active ?
                 <div className="bg-red flex flex-row w-full mx-auto rounded-xl py-2 px-5">
                     <div className="w-full text-center text-lg">

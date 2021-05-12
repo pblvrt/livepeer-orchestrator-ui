@@ -8,9 +8,9 @@ import orchestratorDataHook from '../hooks/orchestratorData';
 
 export default function Home() {
 
-  const [selected, setSelected] = useState(0)
+
   const router = useRouter();
-  const [loading, setIsLoading] = useState(true);
+
 
 
   const {
@@ -35,17 +35,13 @@ export default function Home() {
   useEffect(() => {
     console.log(alertMessage)
     alertMessage.active && router.push("/");
-    // check is data changed, not the most elegant way to do it
-    //orchestratorData.activationRound !== "" && setIsLoading(false);
 
   }, [alertMessage]);
 
 
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
-      <div className="max-w-4xl	 w-full md:mx-auto mt-5 md:mt-10 mb-auto flex flex-col items-center">
-        {loading && <DelegateCalculator orchestratorData={orchestratorData} pricePerPixel={pricePerPixel}/>  }
-      </div>
+        <DelegateCalculator orchestratorData={orchestratorData} pricePerPixel={pricePerPixel}/>  
     </div>
   )
 }

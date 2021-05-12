@@ -74,8 +74,8 @@ const OrchestratorInfo = ({
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-3 justify-center w-full">  
             <DataTooltipSquare label={"Transcoding (ETH)"} data={calculateEthFee().toFixed(3)} />
             <DataTooltipSquare label={"Inflation (LPT)"} data={(calculateDailiyLptReward()*7).toFixed(2)} />
-            <div className="cursor-pointer flex justify-center text-lg items-center shadow-xl text-white 
-                            w-34 sm:w-44 h-20 rounded-xl border-gray border-2 bg-green mx-3 my-3"
+            <div className="cursor-pointer flex justify-center text-lg items-center shadow-xl text-green 
+                            h-20 rounded-xl border-green border-2  mx-3 my-3"
                  onClick={() => router.push(`/calculator?address=${orchestratorAddress}`)}                
             >
                 Calculate ROI
