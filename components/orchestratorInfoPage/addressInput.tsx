@@ -6,7 +6,6 @@ import { useState, useEffect } from "react"
  * @returns AddressInput component
  */
 const AddressInput = ({
-    submit,
     alertMessage,
     orchestratorAddress,
     setOrchestratorAddress
@@ -17,9 +16,13 @@ const AddressInput = ({
         message: ""
     })
 
+    const [localAddress, setLocalAddress] = useState(orchestratorAddress);
+
     useEffect(() => {
         setLocalAlertMessage(alertMessage)
     }, [alertMessage])
+
+    const submit = () =>  setOrchestratorAddress(localAddress);
 
     return (
 
@@ -38,8 +41,8 @@ const AddressInput = ({
                     <input
                         className="bg-gray w-full text-white text-center text-lg"
                         placeholder="input orchestrator address"
-                        value={orchestratorAddress}
-                        onChange={(e: { target: { value: string; }; }) => setOrchestratorAddress(e.target.value)}
+                        value={localAddress}
+                        onChange={(e: { target: { value: string; }; }) => setLocalAddress(e.target.value)}
                     />
                     <div className="w-8 ml-3 cursor-pointer"
                         onClick={() => submit()}

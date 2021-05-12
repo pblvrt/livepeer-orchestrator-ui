@@ -65,8 +65,6 @@
     * @returns {number}
     */
   const calculateDelegatedLptRewards = (delegatedStake: number, LPTcut:number): number => {
-    console.log(LPTcut/100)
-    console.log(calculateDailiyLptReward()*(LPTcut/100));
     return (calculateDailiyLptReward() - calculateDailiyLptReward() * (LPTcut/100)) * (delegatedStake / currentOrchestratorStake)
   }
 

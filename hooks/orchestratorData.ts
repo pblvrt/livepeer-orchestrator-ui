@@ -21,7 +21,7 @@ const orchestratorDataHook = () => {
         status: ""
     });
 
-    const [orchestratorAddress, setOrchestratorAddress] = useState("0xc08dbaf4fe0cbb1d04a14b13edef38526976f2fb")
+    const [orchestratorAddress, setOrchestratorAddress] = useState("0x9c10672cee058fd658103d90872fe431bb6c0afa")
 
     const [pricePerPixel, setPricePerpixel ] = useState(0)
 
@@ -32,8 +32,20 @@ const orchestratorDataHook = () => {
 
 
     useEffect(() => {
-        submit();
-    }, [])
+        if(orchestratorAddress === ""){
+            setAlertMessage({
+                active: true,
+                message: "Address cannot be empty"
+            })
+            return
+        }
+        console.log("orchestrator address: ", orchestratorAddress)
+        fetchOrchestratorData();
+        fetchOrchestratorPrice();
+    }, [orchestratorAddress])
+
+
+    
     const fetchOrchestratorData = async () => {
         axios.post('https://api.thegraph.com/subgraphs/name/livepeer/livepeer', {
             query: `{
@@ -93,23 +105,9 @@ const orchestratorDataHook = () => {
     }
 
 
-    const submit = (): void => {
-
-        if(orchestratorAddress === ""){
-            setAlertMessage({
-                active: true,
-                message: "Address cannot be empty"
-            })
-            return
-        }
-        fetchOrchestratorData();
-        fetchOrchestratorPrice();
-    }
-
     return { 
         orchestratorData, 
         pricePerPixel, 
-        submit, 
         alertMessage,
         orchestratorAddress,
         setOrchestratorAddress

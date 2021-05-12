@@ -3,7 +3,7 @@ import React, { useState } from "react"
 //layout
 import GeneralLayout from '../layouts/generalLayout';
 //Components
-import DataTooltipSquare from '../dataTooltipSquare';
+import DataTooltipSquare from '../generalComponents/dataTooltipSquare';
 import DelgateInput from '../delegateCalculatorPage/delegateInput';
 import TimeRangePicker from './timeRangePicker'
 //Hooks
@@ -68,7 +68,7 @@ const DelegateCalculator = ({
                     />
                     <DataTooltipSquare
                         label={"ETH rewards"}
-                        data={(calculateEthFee(orchestratorData.stake+delegatedStake)).toFixed(5)}
+                        data={(calculateEthFee(orchestratorData.stake+delegatedStake)).toFixed(3)}
                         increase={calculatePercetChange(calculateEthFee(orchestratorData.stake+delegatedStake), calculateEthFee())}
                     />
                 </div>

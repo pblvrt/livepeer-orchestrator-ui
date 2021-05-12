@@ -12,7 +12,8 @@ const TimeRangePicker = ({
         <div className="flex flex-row text-sm text-gray-light ml-2">
             {timeRanges.map((timeRange, index) => {
                 return (    
-                    <div 
+                    <div
+                        key={index}
                         className={`${selected === index ? "text-green" : "text-gray-light"} cursor-pointer border rounded-xl px-3 mb-3 mx-1`}
                         onClick={() => {setTimeRange(timeRange); setSelected(index)}}
                     >

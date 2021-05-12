@@ -3,26 +3,25 @@ import React from "react"
 //layout
 import GeneralLayout from '../layouts/generalLayout';
 //Components
-import DataTooltipSquare from '../dataTooltipSquare';
+import DataTooltipSquare from '../generalComponents/dataTooltipSquare';
+import StakeTooltipSquare from '../generalComponents/stakeTooltipSquare'; 
 import AddressInput from './addressInput';
-//types
-import {orchestratorDataType} from '../../hooks/orchestratorData'
 //Hooks
 import livepeerDataHook from '../../hooks/livepeerData';
 import calculations from "../../hooks/calculations";
+import { useRouter } from 'next/router';
 
 
 const OrchestratorInfo = ({
   orchestratorData,
   pricePerPixel,
   alertMessage,
-  submit,
   orchestratorAddress,
   setOrchestratorAddress
 }) => {
 
+  const router = useRouter();
   const { livepeerData } = livepeerDataHook();
-
 
   const {
     calculateStakeOwnershipPercent,
@@ -42,7 +41,6 @@ const OrchestratorInfo = ({
       <GeneralLayout>
         <p className="text-center text-white text-xl py-5">Orchestrator address</p>
             <AddressInput 
-              submit={submit} 
               orchestratorAddress={orchestratorAddress}
               setOrchestratorAddress={setOrchestratorAddress}
               alertMessage={alertMessage}
@@ -59,7 +57,7 @@ const OrchestratorInfo = ({
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Orchestrator stats</p>
           <div className="flex flex-row grid grid-cols-2 lg:grid-cols-4 justify-center w-full">
-            <DataTooltipSquare label={"Total delegated Lpt"} data={orchestratorData.stake} />
+            <StakeTooltipSquare label={"Total delegated Lpt"} data={orchestratorData.stake} />
             <DataTooltipSquare label={"Network stake %"} data={calculateStakeOwnershipPercent()} />
             <DataTooltipSquare label={"Wei per pixel"} data={pricePerPixel} />
             <DataTooltipSquare label={"Current activity"} data={orchestratorData.active} />
@@ -73,14 +71,14 @@ const OrchestratorInfo = ({
         </div>
         <div className="mx-auto w-full px-3">
           <p className="text-white text-xl my-8 border-b w-full">Estimated orchestrator rewards (7 days)</p>
-          <div className="flex flex-col justify-center">
-            <div className="text-white flex flex-col sm:flex-row mb-3">
-              <p className="text-gray-light text-lg mr-3">Transcoding (eth):</p>
-                network stake % * total pixels streamed * wei per pixel = {calculateEthFee().toFixed(5)}
-            </div>
-            <div className="text-white flex flex-col sm:flex-row mb-3">
-              <p className="text-gray-light text-lg mr-3">Inflation adjustment (Lpt):</p>
-                network stake % * Lpt distributed per round * 7 = {(calculateDailiyLptReward()*7).toFixed(2)}
+          <div className="flex flex-row grid grid-cols-2 lg:grid-cols-3 justify-center w-full">  
+            <DataTooltipSquare label={"Transcoding (ETH)"} data={calculateEthFee().toFixed(3)} />
+            <DataTooltipSquare label={"Inflation (LPT)"} data={(calculateDailiyLptReward()*7).toFixed(2)} />
+            <div className="cursor-pointer flex justify-center text-lg items-center shadow-xl text-white 
+                            w-34 sm:w-44 h-20 rounded-xl border-gray border-2 bg-green mx-3 my-3"
+                 onClick={() => router.push(`/calculator?address=${orchestratorAddress}`)}                
+            >
+                Calculate ROI
             </div>
           </div>
         </div>
@@ -89,3 +87,5 @@ const OrchestratorInfo = ({
 }
 
 export default OrchestratorInfo
+
+
