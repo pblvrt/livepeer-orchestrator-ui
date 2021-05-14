@@ -8,19 +8,16 @@ import DelgateInput from '../delegateCalculatorPage/delegateInput';
 import TimeRangePicker from './timeRangePicker';
 import InformationPanel from './informationPanel';
 //Hooks
-import livepeerDataHook from '../../hooks/livepeerData';
 import calculations from "../../hooks/calculations";
 
+
 const DelegateCalculator = ({
-    orchestratorData,
-    pricePerPixel
+    orchestratorData, pricePerPixel, livepeerData
 }) => {
 
     const [delegatedStake, setdelegatedStake] = useState(0);
-
-    const { livepeerData } = livepeerDataHook();
-
     const [timeRange, setTimeRange] = useState(7)
+
     const {
         calculateStakeOwnershipPercent,
         calculateStakeOwnership,

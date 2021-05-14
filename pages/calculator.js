@@ -2,46 +2,44 @@
 import React, { useEffect, useState } from "react"
 import { useRouter } from 'next/router';
 
+import livepeerDataHook from '../hooks/livepeerData';
 //Components
 import DelegateCalculator from '../components/delegateCalculatorPage/delegateCalculator';
 import orchestratorDataHook from '../hooks/orchestratorData';
+import LoadingScreen from '../components/generalComponents/loadingScreen';
+
 
 export default function Home() {
 
-
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [orchestratorAddress, setOrchestratorAddress] = useState(null);
 
+  const { livepeerData } = livepeerDataHook();
+  const { orchestratorData, pricePerPixel } = orchestratorDataHook(orchestratorAddress);
 
-  const {
-    orchestratorData,
-    pricePerPixel,
-    setOrchestratorAddress,
-    alertMessage
-  } = orchestratorDataHook();
-
-
-  // We will get the Orchestrator address from the url
   useEffect(() => {
-
-    console.log(router.query);
-    if(router.query.address != ""){
-        setOrchestratorAddress(router.query.address);
-    }else{
-        router.push("/");
+    const address = router.query.address;
+    if (address !== "") {
+      setOrchestratorAddress(address);
+      setIsLoading(false);
+    } else {
+      router.push("/");
     }
-  }, [])
-
-  useEffect(() => {
-    console.log(alertMessage)
-    alertMessage.active && router.push("/");
-
-  }, [alertMessage]);
-
+  }, [router.query.address])
 
   return (
     <div className="bg-black flex min-h-screen w-full h-full">
-        <DelegateCalculator orchestratorData={orchestratorData} pricePerPixel={pricePerPixel}/>  
+      {isLoading ?
+        <LoadingScreen />
+        :
+        <DelegateCalculator 
+          orchestratorData={orchestratorData} 
+          pricePerPixel={pricePerPixel} 
+          livepeerData={livepeerData} 
+        />
+      }
     </div>
   )
 }

@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 
 export type orchestratorDataType = {
+    address: string,
     stake: number,
     lptFee: number,
     ethFee: number,
@@ -10,9 +11,10 @@ export type orchestratorDataType = {
     status: string
 }
 
-const orchestratorDataHook = () => {
+const orchestratorDataHook = (orchestratorAddress:string) => {
 
     const [orchestratorData, setOrchestratorData ] = useState<orchestratorDataType>({
+        address: "",
         stake: 0,
         lptFee: 0,
         ethFee: 0,
@@ -20,8 +22,6 @@ const orchestratorDataHook = () => {
         active: "",
         status: ""
     });
-
-    const [orchestratorAddress, setOrchestratorAddress] = useState("0x9c10672cee058fd658103d90872fe431bb6c0afa")
 
     const [pricePerPixel, setPricePerpixel ] = useState(0)
 
@@ -32,13 +32,6 @@ const orchestratorDataHook = () => {
 
 
     useEffect(() => {
-        if(orchestratorAddress === ""){
-            setAlertMessage({
-                active: true,
-                message: "Address cannot be empty"
-            })
-            return
-        }
         console.log("orchestrator address: ", orchestratorAddress)
         fetchOrchestratorData();
         fetchOrchestratorPrice();
@@ -69,6 +62,7 @@ const orchestratorDataHook = () => {
                 });
             }else{
                 setOrchestratorData({
+                    address: orchestratorAddress,
                     stake: parseInt(data[0].totalStake),
                     lptFee: (parseInt(data[0].rewardCut)/10000),
                     ethFee: (parseInt(data[0].feeShare)/10000),
@@ -93,7 +87,6 @@ const orchestratorDataHook = () => {
             response
         ) => {
             const orchestratorData = response.data.filter((orchestrator) => orchestrator.Address === orchestratorAddress)
-            console.log(orchestratorData)
             orchestratorData.length > 0 && setPricePerpixel(parseFloat(orchestratorData[0].PricePerPixel))
         }).catch((e) => {
             console.log(e)
@@ -108,9 +101,7 @@ const orchestratorDataHook = () => {
     return { 
         orchestratorData, 
         pricePerPixel, 
-        alertMessage,
-        orchestratorAddress,
-        setOrchestratorAddress
+        alertMessage
     }
 }
 
